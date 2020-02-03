@@ -1,0 +1,25 @@
+{
+  "name": "allex_loginwebcomponent",
+  "version": "1.0.0",
+  "description": "AllexJS web component for the login widget",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allex-web-components/login.git"
+  },
+  "keywords": [
+    "ecosystem:AllexJS",
+    "login",
+    "web",
+    "component"
+  ],
+  "author": "Andrija Petrovic <andrija.hers@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/allex-web-components/login/issues"
+  },
+  "homepage": "https://github.com/allex-web-components/login#readme"
+}
