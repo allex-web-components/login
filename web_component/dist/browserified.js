@@ -3,16 +3,16 @@ function createElements (execlib, applib, templatelib, htmltemplatelib) {
   'use strict';
 
   var lib = execlib.lib,
-    AngularFormLogic = applib.getElementType('AngularFormLogic');
+    FormLogic = applib.getElementType('FormLogic');
 
   function LoginFormLogic (id, options) {
-    AngularFormLogic.call(this, id, options);
+    FormLogic.call(this, id, options);
   }
-  lib.inherit(LoginFormLogic, AngularFormLogic);
+  lib.inherit(LoginFormLogic, FormLogic);
   LoginFormLogic.prototype.fireInitializationDone = function () {
     this.checkForInputNamed('__remote__username');
     this.checkForInputNamed('__remote__password');
-    AngularFormLogic.prototype.fireInitializationDone.call(this);
+    FormLogic.prototype.fireInitializationDone.call(this);
   };
   LoginFormLogic.prototype.checkForInputNamed = function (name) {
     if (this.$element.find("input[name='"+name+"']").length != 1) {
@@ -20,8 +20,7 @@ function createElements (execlib, applib, templatelib, htmltemplatelib) {
     }
   };
   applib.registerElementType('LoginFormLogic', LoginFormLogic);
-  applib.getModifier('AngularFormLogic.submit').ALLOWED_ON.push('LoginFormLogic');
-
+  applib.getModifier('FormLogic.submit').ALLOWED_ON.push('LoginFormLogic');
 }
 
 module.exports = createElements;
@@ -73,7 +72,7 @@ function createLoginFormModifier (execlib, applib, templatelib, htmltemplatelib)
         default_markup: createMarkup()
       },this.config.form),
       modifiers: [{
-        name: 'AngularFormLogic.submit',
+        name: 'FormLogic.submit',
         options: {
           'actualon': 'none',
           'validon': 'valid',

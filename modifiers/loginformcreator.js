@@ -18,7 +18,7 @@ function createLoginFormModifier (execlib, applib, templatelib, htmltemplatelib)
         default_markup: createMarkup()
       },this.config.form),
       modifiers: [{
-        name: 'AngularFormLogic.submit',
+        name: 'FormLogic.submit',
         options: {
           'actualon': 'none',
           'validon': 'valid',
