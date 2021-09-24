@@ -13,9 +13,9 @@
     "js": [
       "allex:app:lib",
       "allex:jqueryelements:lib",
-      "allex:angular1elements:lib",
       "allex:templateslite:lib",
-      "allex:htmltemplates:lib"
+      "allex:htmltemplates:lib",
+      "allex:form:webcomponent"
     ]
   },
   "protoboard": {

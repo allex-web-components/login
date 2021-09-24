@@ -26,6 +26,7 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
     if (statemap) {
       lib.traverseShallow(statemap, objtokeysnvalues.bind(null, states, statetargets));
     }
+    desc.preprocessors = desc.preprocessors || {};
     desc.preprocessors.DataSource = desc.preprocessors.DataSource || [];
     desc.preprocessors.DataSource.push({
       environment: envname,
@@ -38,22 +39,17 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
         }
       }
     });
+    desc.links = desc.links || [];
     desc.links.push({
-      source: 'element.'+this.config.pathtologinform+'!submit',
+      source: 'element.'+this.config.pathtologinform+'!wantsSubmit',
       target: 'environment.'+envname+'>login'
     });
-    desc.logic.push(/*{
-      triggers: 'element.'+this.config.pathtologinform+'!submit',
-      references: 'element.'+this.config.pathtologinform+',environment.'+envname+'>login',
-      handler: function (loginform, loginfunc, evnt) {
-        loginfunc(evnt);
-        loginform.set('actual', false);
-      }
-    },*/{
+    desc.logic = desc.logic || [];
+    desc.logic.push({
       triggers: 'environment.'+envname+'>login',
       references: 'element.'+this.config.pathtologinform,
       handler: function (form, func) {
-        form.empty();
+        form.resetData();
       }
     },{
       triggers: 'datasource.role:data',

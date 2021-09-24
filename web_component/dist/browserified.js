@@ -3,16 +3,19 @@ function createElements (execlib, applib, templatelib, htmltemplatelib) {
   'use strict';
 
   var lib = execlib.lib,
-    FormLogic = applib.getElementType('FormLogic');
+    FormElement = applib.getElementType('FormElement');
 
   function LoginFormLogic (id, options) {
-    FormLogic.call(this, id, options);
+    FormElement.call(this, id, options);
   }
-  lib.inherit(LoginFormLogic, FormLogic);
+  lib.inherit(LoginFormLogic, FormElement);
+  LoginFormLogic.prototype.__cleanUp = function () {
+    FormElement.prototype.__cleanUp.call(this);
+  };
   LoginFormLogic.prototype.fireInitializationDone = function () {
     this.checkForInputNamed('__remote__username');
     this.checkForInputNamed('__remote__password');
-    FormLogic.prototype.fireInitializationDone.call(this);
+    FormElement.prototype.fireInitializationDone.call(this);
   };
   LoginFormLogic.prototype.checkForInputNamed = function (name) {
     if (this.$element.find("input[name='"+name+"']").length != 1) {
@@ -20,7 +23,6 @@ function createElements (execlib, applib, templatelib, htmltemplatelib) {
     }
   };
   applib.registerElementType('LoginFormLogic', LoginFormLogic);
-  applib.getModifier('FormLogic.submit').ALLOWED_ON.push('LoginFormLogic');
 }
 
 module.exports = createElements;
@@ -157,6 +159,7 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
     if (statemap) {
       lib.traverseShallow(statemap, objtokeysnvalues.bind(null, states, statetargets));
     }
+    desc.preprocessors = desc.preprocessors || {};
     desc.preprocessors.DataSource = desc.preprocessors.DataSource || [];
     desc.preprocessors.DataSource.push({
       environment: envname,
@@ -169,22 +172,17 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
         }
       }
     });
+    desc.links = desc.links || [];
     desc.links.push({
-      source: 'element.'+this.config.pathtologinform+'!submit',
+      source: 'element.'+this.config.pathtologinform+'!wantsSubmit',
       target: 'environment.'+envname+'>login'
     });
-    desc.logic.push(/*{
-      triggers: 'element.'+this.config.pathtologinform+'!submit',
-      references: 'element.'+this.config.pathtologinform+',environment.'+envname+'>login',
-      handler: function (loginform, loginfunc, evnt) {
-        loginfunc(evnt);
-        loginform.set('actual', false);
-      }
-    },*/{
+    desc.logic = desc.logic || [];
+    desc.logic.push({
       triggers: 'environment.'+envname+'>login',
       references: 'element.'+this.config.pathtologinform,
       handler: function (form, func) {
-        form.empty();
+        form.resetData();
       }
     },{
       triggers: 'datasource.role:data',
