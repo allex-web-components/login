@@ -89,6 +89,7 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
             state = arguments[arguments.length-1],
             stateindex = states.indexOf(state),
             target;
+          console.log('current state', state);
           console.log('will deactualize', mystatetargets);
           mystatetargets.forEach(deactualizer);
           if (stateindex<0) {

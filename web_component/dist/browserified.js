@@ -16,11 +16,10 @@ function createElements (execlib, applib, templatelib, htmltemplatelib) {
     FormElement.prototype.__cleanUp.call(this);
   };
   LoginFormLogic.prototype.show = function () {
-    var urlex = this.urlExtraction();
-    if (urlex) {
-      this.inputNamed(usernamestring).val(urlex[usernamestring]);
-      this.inputNamed(passwordstring).val(urlex[passwordstring]);
-      this.wantsSubmit.fire(urlex);
+    if (this.tryAutoLogin()) {
+      return;
+    }
+    if (this.tryUrlExtraction()) {
       return;
     }
     FormElement.prototype.show.call(this);
@@ -36,6 +35,32 @@ function createElements (execlib, applib, templatelib, htmltemplatelib) {
       throw new Error ('Login form has to have an input with name "'+name+'"');
     }
     return ret;
+  };
+  LoginFormLogic.prototype.tryAutoLogin = function () {
+    var autologin = this.getConfigVal('autologin');
+    if (!autologin) {
+      return;
+    }
+    if (!(usernamestring in autologin)) {
+      console.warn('No', usernamestring, 'in autologin');
+      return;
+    }
+    if (!(passwordstring in autologin)) {
+      console.warn('No', passwordstring, 'in autologin');
+      return;
+    }
+    this.inputNamed(usernamestring).val(autologin[usernamestring]);
+    this.inputNamed(passwordstring).val(autologin[passwordstring]);
+    this.wantsSubmit.fire(autologin);
+  };
+  LoginFormLogic.prototype.tryUrlExtraction = function () {
+    var urlex = this.urlExtraction();
+    if (urlex) {
+      this.inputNamed(usernamestring).val(urlex[usernamestring]);
+      this.inputNamed(passwordstring).val(urlex[passwordstring]);
+      this.wantsSubmit.fire(urlex);
+      return true;
+    }
   };
   LoginFormLogic.prototype.urlExtraction = function () {
     var urlex = this.getConfigVal('urlextraction'), query, ret, username;
@@ -260,6 +285,7 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
             state = arguments[arguments.length-1],
             stateindex = states.indexOf(state),
             target;
+          console.log('current state', state);
           console.log('will deactualize', mystatetargets);
           mystatetargets.forEach(deactualizer);
           if (stateindex<0) {
