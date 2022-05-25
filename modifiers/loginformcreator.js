@@ -9,6 +9,8 @@ function createLoginFormModifier (execlib, applib, templatelib, htmltemplatelib)
   }
   lib.inherit(LoginModifier, BasicModifier);
   LoginModifier.prototype.doProcess = function (name, options, links, logic, resources) {
+    options = options || {};
+    options.elements = options.elements || [];
     options.elements.push(lib.extend({
       name: 'loginform',
       type: 'LoginFormLogic',
@@ -16,7 +18,7 @@ function createLoginFormModifier (execlib, applib, templatelib, htmltemplatelib)
         actual: true,
         self_selector: '.',
         default_markup: createMarkup()
-      },this.config.form),
+      },this.config.form)/*,
       modifiers: [{
         name: 'FormLogic.submit',
         options: {
@@ -27,8 +29,8 @@ function createLoginFormModifier (execlib, applib, templatelib, htmltemplatelib)
             actual: true
           }
         }
-      }]
-    }, this.config));
+      }]*/
+    }, lib.pickExcept(this.config, ['form'])));
   };
   LoginModifier.prototype.DEFAULT_CONFIG = function () {
     return {

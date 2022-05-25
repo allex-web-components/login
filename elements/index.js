@@ -23,6 +23,17 @@ function createElements (execlib, applib, templatelib, htmltemplatelib) {
     }
     FormElement.prototype.show.call(this);
   };
+  LoginFormLogic.prototype.staticEnvironmentDescriptor = function (myname) {
+    var submitclickablename = this.getConfigVal('submitclickablename');
+    if (submitclickablename) {
+      return {
+        logic: [{
+          triggers: 'element.'+myname+'.'+submitclickablename+'!clicked',
+          handler: this.fireSubmit.bind(this)
+        }]
+      }
+    }
+  }
   LoginFormLogic.prototype.fireInitializationDone = function () {
     this.inputNamed(usernamestring);
     this.inputNamed(passwordstring);

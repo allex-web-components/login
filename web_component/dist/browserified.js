@@ -24,6 +24,17 @@ function createElements (execlib, applib, templatelib, htmltemplatelib) {
     }
     FormElement.prototype.show.call(this);
   };
+  LoginFormLogic.prototype.staticEnvironmentDescriptor = function (myname) {
+    var submitclickablename = this.getConfigVal('submitclickablename');
+    if (submitclickablename) {
+      return {
+        logic: [{
+          triggers: 'element.'+myname+'.'+submitclickablename+'!clicked',
+          handler: this.fireSubmit.bind(this)
+        }]
+      }
+    }
+  }
   LoginFormLogic.prototype.fireInitializationDone = function () {
     this.inputNamed(usernamestring);
     this.inputNamed(passwordstring);
@@ -128,6 +139,8 @@ function createLoginFormModifier (execlib, applib, templatelib, htmltemplatelib)
   }
   lib.inherit(LoginModifier, BasicModifier);
   LoginModifier.prototype.doProcess = function (name, options, links, logic, resources) {
+    options = options || {};
+    options.elements = options.elements || [];
     options.elements.push(lib.extend({
       name: 'loginform',
       type: 'LoginFormLogic',
@@ -135,7 +148,7 @@ function createLoginFormModifier (execlib, applib, templatelib, htmltemplatelib)
         actual: true,
         self_selector: '.',
         default_markup: createMarkup()
-      },this.config.form),
+      },this.config.form)/*,
       modifiers: [{
         name: 'FormLogic.submit',
         options: {
@@ -146,8 +159,8 @@ function createLoginFormModifier (execlib, applib, templatelib, htmltemplatelib)
             actual: true
           }
         }
-      }]
-    }, this.config));
+      }]*/
+    }, lib.pickExcept(this.config, ['form'])));
   };
   LoginModifier.prototype.DEFAULT_CONFIG = function () {
     return {
@@ -188,12 +201,13 @@ function createPrePreprocessors (execlib, applib, templatelib, htmltemplatelib) 
   'use strict';
 
   require('./loginmechanicscreator')(execlib, applib, templatelib, htmltemplatelib);
+  require('./logoutmechanicscreator')(execlib, applib, templatelib, htmltemplatelib);
 }
 
 module.exports = createPrePreprocessors;
 
 
-},{"./loginmechanicscreator":6}],6:[function(require,module,exports){
+},{"./loginmechanicscreator":6,"./logoutmechanicscreator":7}],6:[function(require,module,exports){
 function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, htmltemplatelib) {
   'use strict';
 
@@ -319,6 +333,38 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
 }
 
 module.exports = createLoginMechanicsPrePreprocessor;
+
+
+},{}],7:[function(require,module,exports){
+function createLogoutMechanicsPrePreprocessor (execlib, applib, templatelib, htmltemplatelib) {
+  'use strict';
+
+  //App prepreprocessor only
+  var lib = execlib.lib,
+    BasicProcessor = applib.BasicProcessor;
+
+  function LogoutMechanicsPrePreprocessor (options) {
+    BasicProcessor.call(this, options);
+  }
+  lib.inherit(LogoutMechanicsPrePreprocessor, BasicProcessor);
+  LogoutMechanicsPrePreprocessor.prototype.process = function (desc) {
+    var envname = this.config.environmentname;
+    desc.preprocessors = desc.preprocessors || {};
+    desc.preprocessors.DataSource = desc.preprocessors.DataSource || [];
+    desc.links = desc.links || [];
+    desc.links.push({
+      source: 'element.'+this.config.pathtologoutbutton+'!clicked',
+      target: 'environment.'+envname+'>logout'
+    });
+  };
+
+  LogoutMechanicsPrePreprocessor.prototype.neededConfigurationNames = ['environmentname', 'pathtologoutbutton'];
+
+  applib.registerPrePreprocessor('LogoutMechanics', LogoutMechanicsPrePreprocessor);
+
+}
+
+module.exports = createLogoutMechanicsPrePreprocessor;
 
 
 },{}]},{},[2]);
