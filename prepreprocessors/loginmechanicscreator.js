@@ -104,6 +104,12 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
           target.set('actual', true);
         }
       });
+      if (!this.config.ignoreconnectionattempts && statemap.pending) {
+        desc.links.push({
+          source: 'environment.'+envname+':connectionAttempt',
+          target: 'element.'+statemap.pending+':connectionAttempt'
+        })
+      }
     }
   };
 
