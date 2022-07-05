@@ -300,8 +300,6 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
             stateindex = states.indexOf(state),
             target;
           console.log('current state', state);
-          console.log('will deactualize', mystatetargets);
-          mystatetargets.forEach(deactualizer);
           if (stateindex<0) {
             stateindex = states.indexOf('.');
           }
@@ -310,8 +308,11 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
             return;
           }
           target = arguments[stateindex];
+          console.log('will deactualize', mystatetargets, 'except', target.id);
+          mystatetargets.forEach(deactualizer.bind(null, target));
           console.log('will actualize', target.id);
           target.set('actual', true);
+          target = null;
         }
       });
       if (!this.config.ignoreconnectionattempts && statemap.pending) {
@@ -328,7 +329,10 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
     values.push('element.'+val);
   }
 
-  function deactualizer (thingy) {
+  function deactualizer (except, thingy) {
+    if (thingy == except) {
+      return;
+    }
     thingy.set('actual', false);
   }
 
