@@ -59,7 +59,7 @@ function createLoginMechanicsPrePreprocessor (execlib, applib, templatelib, html
           role = arguments[arguments.length-1],
           roleindex = roles.indexOf(role),
           target;
-        myroletargets.forEach(deactualizer);
+        myroletargets.forEach(deactualizer.bind(null, null));
         if (roleindex<0) {
           roleindex = roles.indexOf('.');
         }
