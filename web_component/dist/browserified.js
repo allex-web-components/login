@@ -69,7 +69,7 @@ function createElements (execlib, applib, templatelib, htmltemplatelib) {
     if (urlex) {
       this.inputNamed(usernamestring).val(urlex[usernamestring]);
       this.inputNamed(passwordstring).val(urlex[passwordstring]);
-      this.wantsSubmit.fire(urlex);
+      this.wantsSubmit.fire(lib.extend(urlex, this.hardcodedFields));
       return true;
     }
   };
